@@ -1,0 +1,109 @@
+env:
+    env: "trn"
+    github_user_name: 'github-actions'
+    github_email: '41898282+github-actions[bot]@users.noreply.github.com'
+    current-branch-name:  ${{ github.ref_name }}
+    AADB2C_PROVISION_CLIENT_ID : ${{ vars.AZURE_POLARIS_TRN_ADB2C_IAC_DEPLOYMENT_CLIENT_ID }}
+    AADB2C_PROVISION_CLIENT_SECRET : ${{ secrets.AZURE_POLARIS_TRN_ADB2C_IAC_DEPLOYMENT_CLIENT_SECRET }}
+
+
+
+on:
+  workflow_dispatch:
+    # branches:
+    #   - main
+    
+        
+permissions:
+    contents: write
+    issues: write
+    
+name: ADB2C_Deployment_TRN
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-training
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Configure local git
+      run: |
+        echo "git user name  : $github_user_name"
+        git config --global user.name "$github_user_name"
+        echo "git user email : $github_email"
+        git config --global user.email "$github_email"
+      
+    - name: Set up Azure PowerShell environment
+      uses: azure/powershell@v1
+      with:
+        azPSVersion: 'latestversion'
+        inlineScript: |
+            Install-Module -Name Az -AllowClobber -Scope CurrentUser -Repository PSGallery -Force
+            Import-Module Az
+            $clientSecret = ConvertTo-SecureString -String ${{ secrets.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_SECRET}} -AsPlainText -Force
+            $creds = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList ${{vars.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_ID }},$clientSecret
+            Connect-AzAccount -ServicePrincipal -Credential $creds -Tenant ${{ vars.AZURE_POLARIS_TRN_TENANT_ID }}
+            Select-AzSubscription -SubscriptionId ${{ vars.AZURE_POLARIS_TRN_SUBSCRIPTION_ID }}
+            
+
+    - name: Run PowerShell script
+      shell: pwsh
+      run: |
+        # Replace 'path_to_your_script.ps1' with the actual path to your PowerShell script
+        .\Polaris\Polaris-ADB2C\adb2c.ps1 -AzureSubscriptionId ${{ vars.AZURE_POLARIS_TRN_SUBSCRIPTION_ID }} -AzureTenantId ${{ vars.AZURE_POLARIS_TRN_TENANT_ID }} -AzureClientId  ${{vars.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_ID }} -AzureClientSecret  ${{ secrets.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_SECRET}}
+    
+    # - name: Set up Azure CLI
+    #   uses: azure/login@v2
+    #   with:
+    #     creds: ${{secrets.AZURE_CRED}}
+
+    - name: Get App ID
+      uses: azure/powershell@v2
+      with: 
+        inlineScript:  ./Polaris/Polaris-ADB2C/get-appid.ps1
+        azPSVersion: "latest"
+
+          
+    - name: Rerun Powershell script
+      shell: pwsh
+      run: |
+        # Replace 'path_to_your_script.ps1' with the actual path to your PowerShell script
+        .\Polaris\Polaris-ADB2C\adb2c.ps1 -AzureSubscriptionId ${{ vars.AZURE_POLARIS_TRN_SUBSCRIPTION_ID }} -AzureTenantId ${{ vars.AZURE_POLARIS_TRN_TENANT_ID }} -AzureClientId  ${{vars.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_ID }} -AzureClientSecret  ${{ secrets.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL_CLIENT_SECRET}}
+
+  
+    - name: Set up Git Identity
+      run: |
+         git config --global user.email "'41898282+github-actions[bot]@users.noreply.github.com'"
+         git config --global user.name "github-actions"
+
+    
+    - name: Stage changes
+      run: |
+          echo "==> Stage changes..."
+          mapfile -t STATUS_LOG < <(git status --short | grep .)
+          if [ ${#STATUS_LOG[@]} -gt 0 ]; then
+              echo "Found changes to the following files:"
+              printf "%s\n" "${STATUS_LOG[@]}"
+              git add --all
+          else
+              echo "No changes to add."
+          fi
+  
+    - name: Push changes
+      run: |
+          echo "==> Check git diff..."
+          mapfile -t GIT_DIFF < <(git diff --cached)
+          printf "%s\n" "${GIT_DIFF[@]}"
+          if [ ${#GIT_DIFF[@]} -gt 0 ]; then
+              echo "==> Commit changes..."
+              git commit --message "Adding new Json file"
+              echo "==> Push changes..."
+              echo "Pushing changes to: https://github.com/reedspecialistrecruitment/azure-devops/ ${{env.current-branch-name}}"
+              git push https://github.com/reedspecialistrecruitment/azure-devops/ ${{env.current-branch-name}}
+          else
+              echo "No changes found."
+          fi
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,301 @@
+{
+  "AzureADB2C": {
+    "domainName": "rinppolaristrn.onmicrosoft.com",
+    "displayName": "Azure AD B2C",
+    "countryCode": "GB",
+    "location": "Europe",
+    "resourceGroup": "rg-adb2c",
+    "skuName": "PremiumP1",
+    "skuTier": "A0",
+    "env": "training",
+    "appRegistrations": [
+      {
+        "signInAudience": "AzureADandPersonalMicrosoftAccount",
+        "displayName": "Polaris",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [
+            {
+              "adminConsentDescription": "Allow Polaris access",
+              "adminConsentDisplayName": "Allow Polaris access",
+              "id": "abef5330-245b-41f7-8397-82d0d51c9e10",
+              "isEnabled": true,
+              "type": "Admin",
+              "userConsentDescription": null,
+              "userConsentDisplayName": null,
+              "value": "polaris.access"
+            }
+          ],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              }
+            ]
+          },
+          {
+            "resourceAppId": "ca555b37-a33f-4620-83c8-9c6cab08b1c2",
+            "resourceAccess": [
+              {
+                "id": "abef5330-245b-41f7-8397-82d0d51c9e10",
+                "type": "Scope"
+              }
+            ]
+          }
+        ],
+        "spa": {
+          "redirectUris": [
+            "http://localhost:3000/",
+            "https://sandbox.polaris.reedinpartnership.co.uk/"
+          ]
+        }
+      },
+      {
+        "signInAudience": "AzureADandPersonalMicrosoftAccount",
+        "displayName": "Github Deployment Provider",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              },
+              {
+                "id": "79a677f7-b79d-40d0-a36a-3e6f8688dd7a",
+                "type": "Role"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "signInAudience": "AzureADandPersonalMicrosoftAccount",
+        "displayName": "jwt.ms",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              }
+            ]
+          }
+        ],
+        "web": {
+          "redirectUris": [
+            "https://jwt.ms"
+          ],
+          "implicitGrantSettings": {
+            "enableIdTokenIssuance": true,
+            "enableAccessTokenIssuance": true
+          }
+        }
+      },
+      {
+        "signInAudience": "AzureADMyOrg",
+        "displayName": "IdentityExperienceFramework",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [
+            {
+              "adminConsentDescription": "Allow the application to access IdentityExperienceFramework on behalf of the signed-in user",
+              "adminConsentDisplayName": "Access IdentityExperienceFramework",
+              "id": "16474c63-29ca-438e-8ea4-4ceee2e5e9fd",
+              "isEnabled": true,
+              "type": "Admin",
+              "userConsentDescription": null,
+              "userConsentDisplayName": null,
+              "value": "user_impersonation"
+            }
+          ],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              }
+            ]
+          }
+        ],
+        "web": {
+          "redirectUris": [
+            "https://rinppolaristrn.b2clogin.com/rinppolaristrn.onmicrosoft.com"
+          ],
+          "implicitGrantSettings": {
+            "enableIdTokenIssuance": true,
+            "enableAccessTokenIssuance": true
+          }
+        }
+      },
+      {
+        "signInAudience": "AzureADMyOrg",
+        "displayName": "IdentityExperienceFramework Proxy",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              }
+            ]
+          },
+          {
+            "resourceAppId": "490988a0-f3fd-4ac6-b3fc-33aa281cc48a",
+            "resourceAccess": [
+              {
+                "id": "16474c63-29ca-438e-8ea4-4ceee2e5e9fd",
+                "type": "Scope"
+              }
+            ]
+          }
+        ],
+        "publicClient": {
+          "redirectUris": [
+            "myapp://auth"
+          ]
+        }
+      },
+      {
+        "signInAudience": "AzureADMyOrg",
+        "displayName": "User Administrator",
+        "addIns": [],
+        "keyCredentials": [],
+        "passwordCredentials": [],
+        "applicationTemplateId": null,
+        "identifierUris": [],
+        "isDeviceOnlyAuthSupported": null,
+        "groupMembershipClaims": null,
+        "optionalClaims": null,
+        "api": {
+          "requestedAccessTokenVersion": 2,
+          "acceptMappedClaims": null,
+          "knownClientApplications": [],
+          "oauth2PermissionScopes": [],
+          "preAuthorizedApplications": []
+        },
+        "appRoles": [],
+        "requiredResourceAccess": [
+          {
+            "resourceAppId": "00000003-0000-0000-c000-000000000000",
+            "resourceAccess": [
+              {
+                "id": "7427e0e9-2fba-42fe-b0c0-848c9e6a8182",
+                "type": "Scope"
+              },
+              {
+                "id": "37f7f235-527c-4136-accd-4a02d197296e",
+                "type": "Scope"
+              },
+              {
+                "id": "741f803b-c850-494e-b5df-cde7c675a1ca",
+                "type": "Role"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

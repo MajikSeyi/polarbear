@@ -1,0 +1,105 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ukslocation": {
+        "value": "uksouth"
+      },
+      "envshared": {
+        "value": "shared"
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "subscriptionid": {
+        "value": "8e9001ef-d089-4768-b516-ae4be3e68dde"
+      },
+      "env":{
+        "value": "uat"
+      },
+      "mainexpire": {
+        "value": "2030-02-12 06:00"
+      },
+      "mainrecur": {
+        "value": "1Week Friday"
+      },
+      "mainstart": {
+        "value": "2024-03-24 22:00"
+      },
+      "maintimezone": {
+        "value": "GMT Standard Time"
+      },
+      "mainduration": {
+        "value": "08:00"
+      },
+      "rg_springapp": {
+        "value": "rg-springapps"
+      },
+      "rg_documentstorage": {
+        "value": "rg-documentstorage"
+      },
+      "rg_sqlserver": {
+        "value": "rg-sqlserver"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      },
+      "rgautomation":{
+        "value": "rg-automation"
+      },
+      "rg_directusstorage": {
+        "value": "rg-directusstorage"
+      },
+      "rg_rediscache": {
+        "value": "rg-rediscache"
+      },
+      "rg_malwarescanning": {
+        "value": "rg-malwarescanning"
+      },
+      "administratorLogin": {
+        "value": "polaris-db-admin"
+      },
+      "administratorLoginPassword": {
+        "value": "AOy*8TYEC2b0fB$c1d81"
+      },
+      "adsqllogin": {
+        "value": "CL-EntApp-Azure-SQLDBA"
+      },
+      "sidsql": {
+        "value": "26787947-3c58-46db-97e2-545c4deaee7a"
+      },
+      "tentantid": {
+        "value": "3d97076e-80d1-41ff-9ebb-3c9d9ee234ad"
+      },
+      "untrustedstgpresent":{
+        "value": false
+      },
+      "appconfigsku": {
+        "value": "Standard"
+      },
+      "automationstartTime": {
+        "value": "2024-05-28T21:00:00+01:00"
+      },
+      "skuCapacity": {
+        "value": 1
+      },
+      "skuName": {
+        "value": "GP_S_Gen5"
+      },
+      "zoneRedundant": {
+        "value": false
+      },
+      "requestedBackupStorageRedundancy": {
+        "value": "Local"
+      },
+      "weekylong": {
+        "value": "PT0S"
+      },
+      "monthlylong":{
+        "value": "PT0S"
+      },
+      "yearlyRetention":{
+        "value": "PT0S"
+      }
+  }
+}

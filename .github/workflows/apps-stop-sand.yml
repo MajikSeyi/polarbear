@@ -1,0 +1,79 @@
+env:
+  AZURE_SUB_SND: '11ffd136-d5bf-4415-8943-730e458645f5'
+  urldetails: 'https://appconfig-spring-polaris-uat-uksouth.azconfig.io'
+  # resourcegrouplocation: './Polaris/Polaris-RG/polaris-rg-create.bicep'
+  # paramlocation: './Polaris/Polaris-RG/polaris-rg-tst-parm.json'
+  
+on:
+  workflow_dispatch:
+  schedule:
+   - cron: '5 20 * * *'
+  
+
+    
+name: Apps-stop-snd
+jobs:
+  Spring-App-stop:
+    runs-on: windows-latest
+    environment: azure-polaris-sandbox-start-stop-automation
+    steps:
+    - uses: actions/checkout@main
+      # if: github.event.schedule == '15 12 * * *'
+    #   # Log into Azure
+    - name: Install from PSGallery
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module Az.SpringCloud, Az -AllowClobber
+        
+    
+    - name: Login via Az module
+      uses: azure/login@hf_447_release
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_SANDBOX_START_STOP_SERVICE_PRINCIPAL }}
+        enable-AzPSSession: true 
+      
+        
+    - name: Run Azure PowerShell Spring apps
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          $listspringapp = Get-AzSpringCloud | select-object -Property name, ResourceGroupName
+          foreach ($app in $listspringapp)
+          {
+          az spring stop --name $app.name --resource-group $app.ResourceGroupName
+          }
+        azPSVersion: "latest"
+
+    - name: Stop App service
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          Select-AzSubscription -SubscriptionName 'Polaris-Sandbox-Sub'   
+          $listspringapp = Get-AzWebApp | select-object -Property name, ResourceGroup
+          foreach ($app in $listspringapp)
+          {
+
+            az webapp stop --name $app.name --resource-group $app.resourceGroup  
+
+          }
+        azPSVersion: "latest"
+
+    - name: Stop Function App
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          Select-AzSubscription -SubscriptionName 'Polaris-Sandbox-Sub'   
+          $listfunctionapp = Get-AzFunctionApp | Select-object Name,ResourceGroupName
+          foreach ($app in $listfunctionapp)
+          {
+            az functionapp stop --name $app.Name --resource-group $app.ResourceGroupName 
+
+          }
+        azPSVersion: "latest"
+
+
+
+
+
+

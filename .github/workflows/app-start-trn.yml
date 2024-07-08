@@ -1,0 +1,70 @@
+env:
+    AZURE_SUB_TRN: '28949f95-bda6-4716-a7f7-3b13b40d1301'  
+on:
+    workflow_dispatch:
+    # schedule:
+    # #   #Start 
+    # - cron: '25 5 * * 1-5'
+    
+      
+    
+name: Apps-start-trn
+jobs:  
+  
+    Spring-App-start:
+      runs-on: ubuntu-latest
+      environment: azure-polaris-training-start-stop-automation
+      steps:
+      - uses: actions/checkout@main
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_TRN_START_STOP_SERVICE_PRINCIPAL }}
+  
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.48.0
+          inlineScript: |
+                az config set extension.use_dynamic_install=yes_without_prompt
+                az configure --defaults group='rg-springapps' spring='spring-polaris-trn-uksouth'
+                az spring start --name 'spring-polaris-trn-uksouth' --resource-group 'rg-springapps' --subscription ${{ env.AZURE_SUB_TRN }}
+                
+    App-Service-start:
+      runs-on: ubuntu-latest
+      environment: azure-polaris-training-start-stop-automation
+      steps:
+      - uses: actions/checkout@main
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_TRN_START_STOP_SERVICE_PRINCIPAL }}
+  
+  
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.48.0
+          inlineScript: |
+                az config set extension.use_dynamic_install=yes_without_prompt
+                az webapp start --name 'as-app-directus-polaris-trn-uksouth' --resource-group 'rg-directus' --subscription ${{ env.AZURE_SUB_TRN }}
+        
+                
+    Function-App-start:
+      runs-on: ubuntu-latest
+      environment: azure-polaris-training-start-stop-automation
+      steps:
+      - uses: actions/checkout@main
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_TRN_START_STOP_SERVICE_PRINCIPAL }}
+  
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.48.0
+          inlineScript: |
+                az config set extension.use_dynamic_install=yes_without_prompt
+                az functionapp start --name 'as-app-malwarescan-polaris-trn-uksouth' --resource-group 'rg-malwarescanning' --subscription ${{ env.AZURE_SUB_TRN}}  
+  

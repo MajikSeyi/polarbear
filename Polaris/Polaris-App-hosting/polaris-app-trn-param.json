@@ -1,0 +1,193 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "env":{
+        "value": "trn"
+      },
+      "acrenv":{
+        "value": "trn"
+      },
+      "envshared": {
+        "value": "shared"
+      },
+      "ukslocation":{
+        "value": "uksouth"
+      },
+      "aspSkuCapacity":{
+        "value": 2
+      },
+      "aspSkuFamily":{
+        "value": "B"
+      },
+      "aspSkuName":{
+        "value": "B2"
+      },
+      "aspSkuSize":{
+        "value": "B2"
+      },
+      "aspSkuTier":{
+        "value": "Standard"
+      },
+      "zoneRedundant":{
+        "value": false
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "rg_springapp":{
+        "value": "rg-springapps"
+      },
+      "rgstaticwebapp":{
+        "value": "rg-staticwebapps"
+      },
+      "rgvirtualnetworking":{
+        "value": "rg-virtual-networking"
+      },
+      "RuntimeNetworkResourceGroup":{
+        "value": "rg-springapps-runtime-networking"
+      },
+      "appNetworkResourceGroup":{
+        "value": "rg-springapps-app-networking"
+      },
+      "springCloudInstanceName":{
+        "value": "spring-polaris-trn-uksouth"
+      },
+      "appconfig_endpoint":{
+        "value": "https://appconfig-spring-polaris-trn-uksouth.azconfig.io"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      },
+      "rg_directus": {
+        "value": "rg-directus"
+      },
+      "rg_directusstorage": {
+        "value": "rg-directusstorage"
+      },
+      "rg_malwarescanning": {
+        "value": "rg-malwarescanning"
+      },
+      "rg_documentstorage": {
+        "value": "rg-documentstorage"
+      },
+      "privatednsmicro":{
+        "value": "private.azuremicroservices.io"
+      },
+      "calendarservice":{
+        "value": "calendar-service"
+      },
+      "coursename":{
+        "value": "course-service"
+      },
+      "participantename":{
+        "value": "participant-service"
+      },
+      "communicationname":{
+        "value": "communication-service"
+      },
+      "usernameservice":{
+        "value": "user-service"
+      },
+      "directusmanagement":{
+        "value": "directus-management-service"
+      },
+      "documentsservice":{
+        "value": "document-service"
+      },
+      "recruitmentservice":{
+        "value": "recruitment-service"
+      },
+      "resourcespringappExists":{
+        "value": false
+      },
+      "untrustedstgpresent":{
+        "value": false
+      },
+      "userassignmiidacr":{
+        "value": "d821b564-fc1c-4360-a94a-fd10b512eace"
+      },
+      "miuserassignresourceiddirectus":{
+        "value": "/subscriptions/28949f95-bda6-4716-a7f7-3b13b40d1301/resourcegroups/rg-directus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-as-app-directus-polaris-trn-uksouth"
+      },
+      "miuserassignresourceidfunction":{
+        "value": "/subscriptions/28949f95-bda6-4716-a7f7-3b13b40d1301/resourcegroups/rg-malwarescanning/providers/Microsoft.ManagedIdentity/userAssignedIdentities/mi-as-app-malwarescan-polaris-trn-uksouth"
+      },
+      "appconfigpath":{
+        "value": "/directus/configuration/trn-configuration.yaml"
+      },
+      "swarepourl": {
+        "value": "https://github.com/ReedInPartnership/polaris-front-end"
+      },
+      "swarepourlb2c": {
+        "value": "https://github.com/ReedInPartnership/polaris-front-end"
+      },
+      "swabranch": {
+        "value": "TRN_ENV"
+      },
+      "swalocation":{
+        "value": "westeurope"
+      },
+      "frequency": {
+        "value": 900
+      },
+      "timeout": {
+        "value": 120
+      },
+      "alertCriteriaType": {
+        "value": "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+      },
+      "autoMitigate": {
+        "value": false
+      },
+      "severity": {
+        "value": 1
+      },
+      "evaluationFrequency": {
+        "value": "PT1M"
+      },
+      "windowSize": {
+        "value": "PT5M"
+      },
+      "availabilitytestparams": {
+        "value" : [
+          {
+            "webTestName": "availability-test-course-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/courses/rest/version"
+          },
+          {
+            "webTestName": "availability-test-directus-management-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/directus/rest/version"
+          },
+          {
+            "webTestName": "availability-test-document-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/documents/rest/version"
+          },
+          {
+            "webTestName": "availability-test-frontend-website",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk"
+          },
+          {
+            "webTestName": "availability-test-participant-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/participants/rest/version"
+          },
+          {
+            "webTestName": "availability-test-recruitment-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/recruitment/rest/version"
+          },
+          {
+            "webTestName": "availability-test-calendar-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/calendar/rest/version"
+          },
+          {
+            "webTestName": "availability-test-user-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/users/rest/version"
+          },
+          {
+            "webTestName": "availability-test-communication-service",
+            "requestUrl": "https://trn.polaris.reedinpartnership.co.uk/services/communication/rest/version"
+          }
+        ]
+      }
+    }
+  }

@@ -1,0 +1,44 @@
+# Azure template
+
+## Parameters
+
+Parameter name | Required | Description
+-------------- | -------- | -----------
+location       | No       |
+env            | Yes      |
+
+### location
+
+![Parameter Setting](https://img.shields.io/badge/parameter-optional-green?style=flat-square)
+
+
+
+- Default value: `[resourceGroup().location]`
+
+### env
+
+![Parameter Setting](https://img.shields.io/badge/parameter-required-orange?style=flat-square)
+
+
+
+## Snippets
+
+### Parameter file
+
+```json
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "metadata": {
+        "template": "Shared-Services/Shared-App-hosting/shared-apphost.json"
+    },
+    "parameters": {
+        "location": {
+            "value": "[resourceGroup().location]"
+        },
+        "env": {
+            "value": ""
+        }
+    }
+}
+```

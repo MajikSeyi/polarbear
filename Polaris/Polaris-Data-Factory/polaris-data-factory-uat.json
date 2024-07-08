@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ukslocation": {
+      "value": "uksouth"
+    },
+    "envshared": {
+      "value": "shared"
+    },
+    "sharedmonitorsubscription": {
+      "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+    },
+    "rg_shared_monitoring":{
+      "value": "rg-shared-monitoring"
+    },
+    "env":{
+      "value": "uat"
+    },
+    "rg_datafactory": {
+      "value": "rg-datafactory"
+    },
+    "privatednsvaultcore":{
+      "value": "privatelink.vaultcore.azure.net"
+    },
+    "adfresourceExists":{
+      "value": true
+    },
+    "kvresourceExists":{
+      "value": true
+    },
+    "corecount":{
+      "value": 8
+    },
+    "ttltype":{
+      "value": 10
+    },
+    "ttlpipeline":{
+      "value": 10
+    },
+    "pipelinenode":{
+      "value": 1
+    },
+    "externalnode":{
+      "value": 1
+    },
+    "snetazuksouthxp":{
+      "value": "/subscriptions/a16ae676-ff54-4d4b-993f-0d4bd539d984/resourceGroups/deployment-infra-rg/providers/Microsoft.Network/virtualNetworks/deployment-infra-rg-vnet/subnets/azuksouth-xp"
+    },
+    "snetazuksouthgs":{
+      "value": "/subscriptions/a16ae676-ff54-4d4b-993f-0d4bd539d984/resourceGroups/deployment-infra-rg/providers/Microsoft.Network/virtualNetworks/deployment-infra-rg-vnet/subnets/azuksouth-gs"
+    }
+  }
+}

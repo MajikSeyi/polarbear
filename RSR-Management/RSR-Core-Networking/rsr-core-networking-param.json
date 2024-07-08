@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "env": {
+        "value": "rsr"
+      },
+      "ukslocation": {
+        "value": "uksouth"
+      },
+      "corevnetaddressPrefixes":{
+        "value": [
+          "172.16.113.0/24"
+        ]
+      },
+      "nextHopIp":{
+        "value": "172.16.0.68"
+      },
+      "ghactionrunnersubnet":{
+        "value": "172.16.113.0/28"
+      },
+      "rgvirtualnetworking": {
+        "value": "rg-virtual-networking"
+      },
+      "rg_ghrunner": {
+        "value": "rg-github-private-runners"
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      }
+    }
+  }

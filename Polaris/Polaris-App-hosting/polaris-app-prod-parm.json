@@ -1,0 +1,184 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "env":{
+        "value": "prod"
+      },
+      "acrenv":{
+        "value": "production"
+      },
+      "envshared": {
+        "value": "shared"
+      },
+      "ukslocation":{
+        "value": "uksouth"
+      },
+      "aspSkuCapacity":{
+        "value": 3
+      },
+      "aspSkuFamily":{
+        "value": "Pv3"
+      },
+      "aspSkuName":{
+        "value": "P1v3"
+      },
+      "aspSkuSize":{
+        "value": "P1v3"
+      },
+      "aspSkuTier":{
+        "value": "PremiumV3"
+      },
+      "zoneRedundant":{
+        "value": true
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "swarepourl": {
+        "value": "https://github.com/ReedInPartnership/polaris-front-end"
+      },
+      "swarepourlb2c": {
+        "value": "https://github.com/ReedInPartnership/polaris-front-end"
+      },
+      "swabranch": {
+        "value": "PROD_ENV"
+      },
+      "rg_springapp":{
+        "value": "rg-springapps"
+      },
+      "rgstaticwebapp":{
+        "value": "rg-staticwebapps"
+      },
+      "rgvirtualnetworking":{
+        "value": "rg-virtual-networking"
+      },
+      "RuntimeNetworkResourceGroup":{
+        "value": "rg-springapps-runtime-networking"
+      },
+      "appNetworkResourceGroup":{
+        "value": "rg-springapps-app-networking"
+      },
+      "rg_malwarescanning": {
+        "value": "rg-malwarescanning"
+      },
+      "rg_documentstorage": {
+        "value": "rg-documentstorage"
+      },
+      "springCloudInstanceName":{
+        "value": "spring-polaris-prod-uksouth"
+      },
+      "appconfig_endpoint":{
+        "value": "https://appconfig-spring-polaris-prod-uksouth.azconfig.io"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      },
+      "rg_directus": {
+        "value": "rg-directus"
+      },
+      "rg_directusstorage": {
+        "value": "rg-directusstorage"
+      },
+      "privatednsmicro":{
+        "value": "private.azuremicroservices.io"
+      },
+      "calendarservice":{
+        "value": "calendar-service"
+      },
+      "coursename":{
+        "value": "course-service"
+      },
+      "participantename":{
+        "value": "participant-service"
+      },
+      "communicationname":{
+        "value": "communication-service"
+      },
+      "usernameservice":{
+        "value": "user-service"
+      },
+      "directusmanagement":{
+        "value": "directus-management-service"
+      },
+      "documentsservice":{
+        "value": "document-service"
+      },
+      "recruitmentservice":{
+        "value": "recruitment-service"
+      },
+      "appconfigpath":{
+        "value": "/directus/configuration/prod-configuration.yaml"
+      },
+      "resourcespringappExists":{
+        "value": true
+      },
+      "untrustedstgpresent":{
+        "value": true
+      },
+      "swalocation":{
+        "value": "westeurope"
+      },
+      "frequency": {
+        "value": 900
+      },
+      "timeout": {
+        "value": 120
+      },
+      "alertCriteriaType": {
+        "value": "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+      },
+      "autoMitigate": {
+        "value": false
+      },
+      "severity": {
+        "value": 1
+      },
+      "evaluationFrequency": {
+        "value": "PT1M"
+      },
+      "windowSize": {
+        "value": "PT5M"
+      },
+      "availabilitytestparams": {
+        "value" : [
+          {
+            "webTestName": "availability-test-course-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/courses/rest/version"
+          },
+          {
+            "webTestName": "availability-test-directus-management-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/directus/rest/version"
+          },
+          {
+            "webTestName": "availability-test-document-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/documents/rest/version"
+          },
+          {
+            "webTestName": "availability-test-frontend-website",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk"
+          },
+          {
+            "webTestName": "availability-test-participant-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/participants/rest/version"
+          },
+          {
+            "webTestName": "availability-test-recruitment-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/recruitment/rest/version"
+          },
+          {
+            "webTestName": "availability-test-calendar-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/calendar/rest/version"
+          },
+          {
+            "webTestName": "availability-test-user-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/users/rest/version"
+          },
+          {
+            "webTestName": "availability-test-communication-service",
+            "requestUrl": "https://polaris.reedinpartnership.co.uk/services/communication/rest/version"
+          }
+        ]
+      }
+    }
+  }

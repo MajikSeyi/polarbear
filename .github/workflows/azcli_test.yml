@@ -1,0 +1,70 @@
+env:
+  AZURE_SUB_SAND: '11ffd136-d5bf-4415-8943-730e458645f5'
+  urldetails: 'https://appconfig-spring-polaris-test-uksouth.azconfig.io'
+  # resourcegrouplocation: './Polaris/Polaris-RG/polaris-rg-create.bicep'
+  # paramlocation: './Polaris/Polaris-RG/polaris-rg-tst-parm.json'
+  
+
+
+on: [workflow_dispatch]
+
+name: Az cli testing
+jobs:  
+  Sping-app-azcli:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-sandbox-start-stop-automation
+    steps:
+    - uses: actions/checkout@main
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_SANDBOX_START_STOP_SERVICE_PRINCIPAL }}
+        enable-AzPSSession: true
+
+    - name: Install from PSGallery
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module Az.SpringCloud, PSScriptAnalyzer, Az
+
+    - name: Run Azure PowerShell script
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+          $listspringapp = Get-AzSpringCloud | select "Name"
+          foreach ($app in $listspringapp)
+          {
+            Write-Host $app
+          }    
+        azPSVersion: "latest"
+
+  # Appservice-app-azcli:
+  #               az spring stop --name '$app.name' --resource-group '$app.resourceGroup'
+
+  #        $listspringapp = Get-AzSpringCloud | select "Name"
+  #   runs-on: ubuntu-latest
+  #   environment: azure-polaris-test-start-stop-automation
+  #   steps:
+  #   - uses: actions/checkout@main
+  #     # Log into Azure
+  #   - uses: azure/login@v1
+  #     with:
+  #       creds: ${{ secrets.AZURE_POLARIS_SANDBOX_START_STOP_SERVICE_PRINCIPAL }}
+
+  #   - name: Azure CLI script
+  #     uses: azure/CLI@v1
+  #     with:
+  #       azcliversion: 2.48.0
+  #       inlineScript: |
+  #             az config set extension.use_dynamic_install=yes_without_prompt
+  #             az webapp stop --name webstop-start --resource-group 'rg-ahspring' --subscription ${{ env.AZURE_SUB_SAND }}
+
+
+    # - name: Azure CLI script
+    #   uses: azure/CLI@v1
+    #   with:
+    #     azcliversion: 2.48.0
+    #     inlineScript: |
+    #          $listspring = az spring-cloud list --subscription ${{ env.AZURE_SUB_SAND}}  
+    #          Write-Host $listspring
+    #           az config set extension.use_dynamic_install=yes_without_prompt

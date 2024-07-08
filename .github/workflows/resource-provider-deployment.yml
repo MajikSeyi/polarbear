@@ -1,0 +1,161 @@
+env:
+  AZURE_SUB_TST: 'f00e932c-2dc9-4eed-83ab-28bee4d9dbb3'
+  AZURE_SUB_UAT: '8e9001ef-d089-4768-b516-ae4be3e68dde'
+  AZURE_SUB_TRN: '28949f95-bda6-4716-a7f7-3b13b40d1301'
+  AZURE_SUB_PROD: '95ca7646-ed92-470e-9dfb-23f25093d507'
+  
+
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      select:
+        type: choice
+        description: Pipeline to deploy
+        options:
+           - Register_UAT
+           - Register_TRN
+           - Register_TST
+           - Register_PROD
+
+
+name: Resource provider registration
+jobs:
+  Register-resource-provider-TST:
+    if: inputs.select == 'Register_TST'
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test
+
+    steps:
+      - name: Login to Azure(Test)
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_POLARIS_TEST_SERVICE_PRINCIPAL}}
+
+      - name: Add Resource provider to test
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            az register --namespace "" --subscription ${{env.AZURE_SUB_TST}}
+          azPSVersion: 'latest'
+
+  Get-test-resource-provider:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test
+    outputs:
+      registered-providers: ${{ steps.Get-resource-providers.outputs.registered-providers }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+
+      - name: Login to Azure (Test)
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_POLARIS_TEST_SERVICE_PRINCIPAL}}
+        
+      - name: Get resource providers
+        id: Get-resource-providers
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+             $providers = az provider list --subscription ${{env.AZURE_SUB_TST}} --query "[?registrationState=='Registered'].{Namespace:namespace}" --output tsv
+             echo "::set-output name=registered-providers::$providers"
+          azPSVersion: 'latest'
+
+      - name: Logout from Test
+        run: az logout
+
+  Register-resource-provider-TRN:
+    if: inputs.select == 'Register_TRN'
+    needs: Get-test-resource-provider
+    runs-on: ubuntu-latest
+    environment: azure-polaris-training
+
+    steps:
+      - name: Login to Aazure (Training)
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_TRN_SERVICE_PRINCIPAL }}
+      
+      - name: Register resource providers (Training)
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $providers = "${{needs.Get-test-resource-provider.outputs.registered-providers}}"
+            $providerlist = $providers.Split(" ")
+    
+            foreach ($provider in $providerlist) {
+              az provider register --namespace $provider --subscription ${{env.AZURE_SUB_TRN}}
+              Write-Host "$provider"
+            }
+          azPSVersion: 'latest'
+
+      - name: List Registered resource providers (Training)
+        run: |
+          registered_providers=$(az provider list --subscription ${{env.AZURE_SUB_TRN}} --query "[?registrationState=='Registered'].{Namespace:namespace}" --output tsv)
+          echo "List of Registered resource providers for Training"
+          echo "$registered_providers"
+
+  Register-resource-provider-UAT:
+    if: inputs.select == 'Register_UAT'
+    needs: Get-test-resource-provider
+    runs-on: ubuntu-latest
+    environment: azure-polaris-uat
+
+    steps:
+      - name: Login to Aazure (UAT)
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_UAT_SERVICE_PRINCIPAL }}
+              
+      - name: Register resource providers (UAT)
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $providers = "${{needs.Get-test-resource-provider.outputs.registered-providers}}"
+            $providerlist = $providers.Split(" ")
+      
+            foreach ($provider in $providerlist) {
+              az provider register --namespace $provider --subscription ${{env.AZURE_SUB_UAT}}
+              Write-Host "$provider"
+            }
+          azPSVersion: 'latest'
+
+      - name: List Registered resource providers (UAT)
+        run: |
+          registered_providers=$(az provider list --subscription ${{env.AZURE_SUB_UAT}} --query "[?registrationState=='Registered'].{Namespace:namespace}" --output tsv)
+          echo "List of Registered resource providers for Training"
+          echo "$registered_providers"
+
+  Register-resource-provider-PROD:
+    if: inputs.select == 'Register_PROD'
+    needs: Get-test-resource-provider
+    runs-on: ubuntu-latest
+    environment: azure-polaris-production
+
+    steps:
+      - name: Login to Aazure (PROD)
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_POLARIS_PROD_SERVICE_PRINCIPAL }}
+              
+      - name: Register resource providers (PROD)
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            $providers = "${{needs.Get-test-resource-provider.outputs.registered-providers}}"
+            $providerlist = $providers.Split(" ")
+      
+            foreach ($provider in $providerlist) {
+              az provider register --namespace $provider --subscription ${{env.AZURE_SUB_PROD}}
+              Write-Host "$provider"
+            }
+          azPSVersion: 'latest'
+
+      - name: List Registered resource providers (PROD)
+        run: |
+          registered_providers=$(az provider list --subscription ${{env.AZURE_SUB_PROD}} --query "[?registrationState=='Registered'].{Namespace:namespace}" --output tsv)
+          echo "List of Registered resource providers for Training"
+          echo "$registered_providers"

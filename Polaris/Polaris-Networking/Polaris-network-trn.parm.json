@@ -1,0 +1,155 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "env": {
+        "value": "trn"
+      },
+      "envshared": {
+        "value": "shared"
+      },
+      "ukslocation": {
+        "value": "uksouth"
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "vnetappname": {
+        "value": "vnet-polaris-trn-uksouth"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      },
+      "vnetaddressPrefixes":{
+        "value": [
+          "172.16.96.0/20"
+        ]
+      },
+      "nextHopIp":{
+        "value": "172.16.0.68"
+      },
+      "IPRuntimeSubnet":{
+        "value": "172.16.96.0/27"
+      },
+      "IPApplicationsSubnet":{
+        "value": "172.16.96.32/27"
+      },
+      "IPPrivateLinkSubnet":{
+        "value": "172.16.96.64/27"
+      },
+      "IPPrivateEndpointsSubnet":{
+        "value": "172.16.96.96/27"
+      },
+      "IPAppServicesSubnet":{
+        "value": "172.16.96.128/26"
+      },
+      "kvgroupIds":{
+        "value": [
+          "vault"
+        ]
+      },
+      "azconfiggroupIds":{
+        "value": [
+          "configurationStores"
+        ]
+      },
+      "sqlgroupIds":{
+        "value": [
+          "sqlServer"
+        ]
+      },
+      "blobgroupIds":{
+        "value": [
+          "blob"
+        ]
+      },
+      "filegroupIds":{
+        "value": [
+          "file"
+        ]
+      },
+      "queuegroupIds":{
+        "value": [
+          "queue"
+        ]
+      },
+      "automategroupIds":{
+        "value": [
+          "Webhook"
+        ]
+      },
+      "containerreggroupIds":{
+        "value": [
+          "registry"
+        ]
+      },
+      "rediscachegroupIds":{
+        "value": [
+          "rediscache"
+        ]
+      },
+      "privatednsvaultcore":{
+        "value": "privatelink.vaultcore.azure.net"
+      },
+      "privatednsappconfig":{
+        "value": "privatelink.azconfig.io"
+      },
+      "privatednsmicro":{
+        "value": "private.azuremicroservices.io"
+      },
+      "privatednsdatabase":{
+        "value": "privatelink.database.windows.net"
+      },
+      "privatednsblobcore":{
+        "value": "privatelink.blob.core.windows.net"
+      },
+      "privatednsfilecore":{
+        "value": "privatelink.file.core.windows.net"
+      },
+      "privatednsqueuecore":{
+        "value": "privatelink.queue.core.windows.net"
+      },
+      "privateautomation":{
+        "value": "privatelink.azure-automation.net"
+      },
+      "privatecontainerregistry":{
+        "value": "privatelink.azurecr.io"
+      },
+      "privaterediscache":{
+        "value": "privatelink.redis.cache.windows.net"
+      },
+      "privateazurewebsites":{
+        "value": "privatelink.azurewebsites.net"
+      },
+      "rg_springapp":{
+        "value": "rg-springapps"
+      },
+      "rgprivateendpoints":{
+        "value": "rg-privateendpoints"
+      },
+      "rg_sqlserver":{
+        "value": "rg-sqlserver"
+      },
+      "rg_documentstorage":{
+        "value": "rg-documentstorage"
+      },
+      "rg_directusstorage":{
+        "value": "rg-directusstorage"
+      },
+      "rgautomation":{
+        "value": "rg-automation"
+      },
+      "rg_shared_containerregistries":{
+        "value": "rg-shared-containerregistries"
+      },
+      "rg_rediscache":{
+        "value": "rg-rediscache"
+      },
+      "rg_malwarescanning":{
+        "value": "rg-malwarescanning"
+      },
+      "rgvirtualnetworking": {
+        "value": "rg-virtual-networking"
+      }
+    }
+  }

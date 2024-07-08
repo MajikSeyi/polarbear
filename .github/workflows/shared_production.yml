@@ -1,0 +1,179 @@
+env:
+  AZURE_SUB_SHARED_PROD: '3592b1b4-dca4-42c2-95dc-bf0902211479'
+  loggingandmonitorlocation: './Shared-Services/Shared-Monitoring/shared-monitoring.bicep'
+  activitylogslocation: './Shared-Services/Shared-Monitoring/shared-activitylog.bicep'
+  paramlocation: './Shared-Services/Shared-Monitoring/shared-monitoring-param.json'
+  rglocation: './Shared-Services/Shared-Orchestration/Polaris-RG/Shared-rg-create.bicep'
+  rgparamlocation: './Shared-Services/Shared-Orchestration/Polaris-RG/Shared-rg.parm.json'
+  containerlocation: './Shared-Services/Shared-List/shared-container-registry.bicep'
+  containerparamlocation: './Shared-Services/Shared-List/shared-container-registry.param.json'
+  
+
+on:
+  workflow_dispatch:
+    inputs:
+      select:
+        type: choice
+        description: Pipeline to deploy
+        options:
+          - Deploy_Resource_Group
+          - Deploy_Log_and_Monitor
+          - Deploy_Azure_Container_Registry
+          - Create_New_ACR_Token
+          - Deploy_Activity_Logs
+
+name: Shared_Production_deployment
+jobs: 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: run bicep linter
+        run: az bicep build --file ${{ env.loggingandmonitorlocation }}
+              
+              
+  build_deploy_rg_create:
+    needs: [lint]
+    if: inputs.select == 'Deploy_Resource_Group'
+    runs-on: ubuntu-latest
+    environment: 	azure-monitoring-production
+    steps:
+    - uses: actions/checkout@main
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_MONITORING_PRODUCTION_SERVICE_PRINCIPAL }}
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_SHARED_PROD }}
+        template: ${{ env.rglocation }} 
+        parameters: ${{ env.rgparamlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+
+  build_deploy_logandmonitor:
+    needs: [lint]
+    if: inputs.select == 'Deploy_Log_and_Monitor'
+    runs-on: ubuntu-latest
+    environment: 	azure-monitoring-production
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_MONITORING_PRODUCTION_SERVICE_PRINCIPAL }}
+
+      # Dev Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_SHARED_PROD }}
+        template: ${{ env.loggingandmonitorlocation }} 
+        parameters: ${{ env.paramlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+   
+  build_deploy_container:
+    needs: [lint]
+    if: inputs.select == 'Deploy_Azure_Container_Registry'
+    runs-on: ubuntu-latest
+    environment: 	azure-monitoring-production
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_MONITORING_PRODUCTION_SERVICE_PRINCIPAL }}
+
+      # Dev Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_SHARED_PROD }}
+        template: ${{ env.containerlocation }} 
+        parameters: ${{ env.containerparamlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+
+  create_new_acr_token:
+    needs: [lint]
+    if: inputs.select == 'Create_New_ACR_Token'
+    runs-on: ubuntu-latest
+    environment: 	azure-monitoring-production
+    steps:
+
+      - uses: actions/checkout@main
+    
+  
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_MONITORING_PRODUCTION_SERVICE_PRINCIPAL }}
+          enable-AzPSSession: true 
+
+      - name: Install latest version of Bicep
+        shell: sh
+        run: |
+            # From https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#linux
+            # Fetch the latest Bicep CLI binary
+            curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+            # Mark it as executable
+            chmod +x ./bicep
+            # Add bicep to your PATH (requires admin)
+            sudo mv ./bicep /usr/local/bin/bicep
+            # Verify you can now access the 'bicep' command
+            bicep --help
+            # Done!
+  
+  
+      - name: Install from PSGallery
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Az.SpringCloud, Az -AllowClobber
+  
+      - name: Create ACR Token
+        id: token
+        shell: pwsh
+        run: |
+          $token = az acr token create --name github-storage-scanning-user --registry crreedsharedproduction.azurecr.io --scope-map storage-scanning-repository-push | ConvertFrom-Json
+          echo "ACR_TOKEN=$($token.credentials.passwords[0].value)" >> $env:GITHUB_ENV
+          echo "ACR_TOKEN_ID=$($token.id)" >> $env:GITHUB_ENV
+      
+
+
+
+  build_deploy_activity_logs:
+    needs: [lint]
+    if: inputs.select == 'Deploy_Activity_Logs'
+    runs-on: ubuntu-latest
+    environment: 	azure-monitoring-production
+    steps:
+
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_MONITORING_PRODUCTION_SERVICE_PRINCIPAL }}
+
+      # Dev Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_SHARED_PROD }}
+        template: ${{ env.activitylogslocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+        

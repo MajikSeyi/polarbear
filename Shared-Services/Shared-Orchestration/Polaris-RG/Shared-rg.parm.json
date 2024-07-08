@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ukslocation": {
+        "value": "uksouth"
+      },
+      "sharedmonitorsubscription": {
+        "value": "3592b1b4-dca4-42c2-95dc-bf0902211479"
+      },
+      "sharedgateway": {
+        "value": "e22eb6a5-6f38-4574-9b84-1c1dbe1c8b97"
+      },
+      "rg_shared_b2c": {
+        "value": "rg-shared-b2c"
+      },
+      "rg_shared_containerregistries": {
+        "value": "rg-shared-containerregistries"
+      },
+      "rg_shared_monitoring": {
+        "value": "rg-shared-monitoring"
+      }
+  }
+}

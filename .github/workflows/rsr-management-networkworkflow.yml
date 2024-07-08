@@ -1,0 +1,115 @@
+env:
+    AZURE_SUB_RSR: 'b6dedd61-95e4-477c-a8cb-1fa7e8326efd'
+    networklocation: './RSR-Management/RSR-Core-Networking/rsr-core-networking.bicep'
+    paramlocation: './RSR-Management/RSR-Core-Networking/rsr-core-networking-param.json'
+    
+  
+on:
+  workflow_dispatch:
+    branches:
+      - main 
+    inputs:
+      select:
+        type: choice
+        description: Pipeline to deploy
+        options:
+          - Deploy_bicep
+          - Deploy_NS
+      tag:
+        description: "Tag to apply to main branch"
+        required: true
+  
+  
+name: RSR_network_deployment
+jobs:
+  validate:
+    if: inputs.select == 'Deploy_bicep' 
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps: 
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_RSR }}
+        template: ${{ env.networklocation }} 
+        parameters: ${{ env.paramlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+        deploymentMode: validate
+  lint:
+    if: inputs.select == 'Deploy_bicep'
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v2
+        - name: run bicep linter
+          run: az bicep build --file ${{ env.networklocation }}
+
+  build_whatif_network_rsr:
+    if: inputs.select == 'Deploy_bicep'
+    needs: [lint,validate]
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+           creds: ${{secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL}}
+    - name: what-if
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_RSR }}
+        template: ${{ env.networklocation }} 
+        parameters: ${{ env.paramlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false 
+        additionalArguments: --what-if
+
+  build_deploy_network_rsr:
+    if: inputs.select == 'Deploy_bicep'
+    needs: [lint, validate, build_whatif_network_rsr]
+    runs-on: ubuntu-latest
+    environment: azure-it-rsr-development-management
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@v3
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
+
+        # Dev Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_RSR }}
+        template: ${{ env.networklocation }} 
+        parameters: ${{ env.paramlocation }} 
+        region: 'uksouth'
+        failOnStdErr: false
+
+  Deploy_NS:
+    if: inputs.select == 'Deploy_NS'
+    runs-on: ubuntu-latest
+    environment: azure-it-rsr-development-management
+    steps:
+      - name: Checkout code    
+        uses: actions/checkout@v3
+   
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_SERVICE_PRINCIPAL }}
+      
+      - name: Run networksetting.sh
+        run: |
+          chmod +x ./RSR-Management/RSR-Core-Networking/networksettings.sh
+          ./RSR-Management/RSR-Core-Networking/networksettings.sh

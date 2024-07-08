@@ -1,0 +1,83 @@
+env:
+  AZURE_SUB_TST: 'f00e932c-2dc9-4eed-83ab-28bee4d9dbb3'
+  applicationlocation: './Polaris/Polaris-App-hosting/polaris-apphost.bicep'
+  paramlocation: './Polaris/Polaris-App-hosting/polaris-app-tst-parm.json'
+  
+# on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - Polaris/Polaris-App-hosting/polaris-apphost.bicep
+      - Polaris/Polaris-App-hosting/polaris-app-tst-parm.json
+      - modules/Application.platform/Azurespringapp/azurespingapp.bicep
+
+name: Application_deployment_TST
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run bicep linter
+        run: az bicep build --file ${{ env.applicationlocation }}
+
+  validate: 
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps: 
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_TST }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+        deploymentMode: validate
+
+  build_whatif_application_TST:
+    needs: [lint, validate]
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - name: Run what-if 
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_TST }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+        additionalArguments: --what-if
+
+  build_deploy_application_TST:
+    needs: [lint, validate, build_whatif_application_TST ]
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_TEST_SERVICE_PRINCIPAL }}
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_TST }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+

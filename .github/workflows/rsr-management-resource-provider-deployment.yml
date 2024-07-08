@@ -1,0 +1,41 @@
+env:
+  AZURE_SUB_RSR: 'b6dedd61-95e4-477c-a8cb-1fa7e8326efd'
+
+
+on:
+    workflow_dispatch:
+      branches:
+        - main 
+      inputs:
+        tag:
+          description: "Tag to apply to main branch"
+          required: true
+          
+name: RSR Management resource provider deployment
+jobs:  
+    Register-resource-provider:
+      runs-on: ubuntu-latest
+      environment: azure-it-rsr-development-management
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
+        - name: Login to Azure
+          uses: azure/login@v1
+          with:
+            creds: ${{secrets.AZURE_SERVICE_PRINCIPAL}}
+
+        - name: Target Azure Subscription
+          run: az account set --subscription ${{env.AZURE_SUB_RSR}}
+
+        - name: Check if Microsoft.Network is registered
+          id: check-register
+          run: |
+            registration_state=$(az provider show -n Github.Network --query "registrationState" -o tsv || echo "NotRegistered")
+            echo "::set-output name=result::$registration_state"
+
+        - name: Register Microsoft.Network resource provider
+          if: steps.check-register.outputs.result != 'Registered'
+          run: |
+            az provider register --namespace Github.Network

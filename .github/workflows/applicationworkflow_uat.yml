@@ -1,0 +1,114 @@
+env:
+  AZURE_SUB_UAT: '8e9001ef-d089-4768-b516-ae4be3e68dde'
+  applicationlocation: './Polaris/Polaris-App-hosting/polaris-apphost.bicep'
+  paramlocation: './Polaris/Polaris-App-hosting/polaris-app-uat-parm.json'
+  
+# on:
+#   release:
+#     types: [published]
+
+# on:
+#   push:
+#     branches:
+#       - feature/AH
+# on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+    branches:
+      - main 
+    inputs:
+      tag:
+        description: "Tag to apply to main branch"
+        required: true
+
+
+name: Application_deployment_UAT
+jobs:
+  create-release-candidate:
+    runs-on: ubuntu-latest
+    env:
+      # release-artifacts-upload-filespec: build-artifacts/artifact.txt
+      unique-tag-name: ${{ inputs.tag }}-releasecandidate-${{ github.run_id }}-${{ github.run_attempt }}
+    outputs:
+      release-id: ${{ steps.create-release.outputs.id }}
+    steps:
+      - name: Create release
+        id: create-release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ env.unique-tag-name }}
+          tag_name: ${{ env.unique-tag-name }}
+          generate_release_notes: true
+          draft: false
+          prerelease: true
+          # files: ${{ env.release-artifacts-upload-filespec }}
+
+  lint:
+    needs: [create-release-candidate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run bicep linter
+        run: az bicep build --file ${{ env.applicationlocation }}
+
+  validate: 
+    needs: [create-release-candidate]
+    if: "!github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps: 
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_UAT }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+        deploymentMode: validate
+
+  build_whatif_application_UAT:
+    needs: [lint, validate, create-release-candidate]
+    if: "!github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - name: Run what-if 
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_UAT }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+        additionalArguments: --what-if
+
+  build_deploy_application_UAT:
+    needs: [lint, validate, build_whatif_application_UAT ]
+    if: "!github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    environment: azure-polaris-uat
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_UAT_SERVICE_PRINCIPAL }}
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_UAT }}
+        template: ${{ env.applicationlocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 

@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ukslocation": {
+        "value": "uksouth"
+      },
+      "rg_documentstorage": {
+        "value": "rg-documentstorage"
+      },
+      "rg_springapp": {
+      "value": "rg-springapps"
+      },
+      "rg_virtualnetwork": {
+        "value": "rg-virtual-networking"
+      },
+      "rg_springapp_runtime": {
+        "value": "rg-springapps-runtime-networking"
+      },
+      "rg_springapp_apps": {
+        "value": "rg-springapps-app-networking"
+      },
+      "rg_privateendpoint": {
+        "value": "rg-privateendpoints"
+      },
+      "rg_sqlserver": {
+        "value": "rg-sqlserver"
+      },
+      "rg_automation": {
+        "value": "rg-automation"
+      },
+      "rg_rediscache": {
+        "value": "rg-rediscache"
+      },
+      "rg_directus": {
+        "value": "rg-directus"
+      },
+      "rg_directusstorage": {
+        "value": "rg-directusstorage"
+      },
+      "rg_malwarescanning": {
+        "value": "rg-malwarescanning"
+      },
+      "rg_datafactory": {
+        "value": "rg-datafactory"
+      },
+      "rg_staticwebapps": {
+      "value": "rg-staticwebapps"
+      },
+      "rg_adb2c": {
+        "value": "rg-adb2c"
+      },
+      "rg_dashboards": {
+        "value": "rg-dashboards"
+      },
+      "rgresourceExists": {
+        "value": true
+      }
+  }
+}

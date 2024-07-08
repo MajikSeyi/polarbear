@@ -1,0 +1,45 @@
+
+on:
+  issues:
+    types: [closed]
+# on: push
+
+name: Jira Close Bug
+
+jobs:
+  close-ticket:
+    name: Transition Issue
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - run: npm install jira-client
+
+    - name: Login
+      uses: atlassian/gajira-login@v3
+      env:
+        JIRA_BASE_URL: https://reedglobal.atlassian.net
+        JIRA_USER_EMAIL: alex.hunte@reed.com
+        JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+
+    - name: Find Comment
+      uses: peter-evans/find-comment@v2
+      id: fc
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body-regex: 'IAC-*'
+
+
+    - name: Transition issue
+      uses: atlassian/gajira-transition@master
+      with:
+       issue: ${{ steps.fc.outputs.comment-body }}
+       transition: "Done"
+
+
+
+

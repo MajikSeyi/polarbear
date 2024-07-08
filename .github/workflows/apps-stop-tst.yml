@@ -1,0 +1,72 @@
+env:
+  AZURE_SUB_TST: 'f00e932c-2dc9-4eed-83ab-28bee4d9dbb3'
+  urldetails: 'https://appconfig-spring-polaris-test-uksouth.azconfig.io'
+  # resourcegrouplocation: './Polaris/Polaris-RG/polaris-rg-create.bicep'
+  # paramlocation: './Polaris/Polaris-RG/polaris-rg-tst-parm.json'
+  
+
+
+on:
+  schedule:
+    #Stop 
+    - cron: '10 18 * * 1-5'
+  workflow_dispatch:
+
+name: Apps-stop-tst
+jobs:  
+  Spring-App-stop:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test-start-stop-automation
+    steps:
+    - uses: actions/checkout@main
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_TEST_START_STOP_SERVICE_PRINCIPAL }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.48.0
+        inlineScript: |
+              az config set extension.use_dynamic_install=yes_without_prompt
+              az configure --defaults group='rg-springapps' spring='spring-polaris-test-uksouth'
+              az spring stop --name 'spring-polaris-test-uksouth' --resource-group 'rg-springapps' --subscription ${{ env.AZURE_SUB_TST }}  
+
+  App-Service-stop:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test-start-stop-automation
+    steps:
+    - uses: actions/checkout@main
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_TEST_START_STOP_SERVICE_PRINCIPAL }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.48.0
+        inlineScript: |
+              az config set extension.use_dynamic_install=yes_without_prompt
+              az webapp stop --name 'as-app-directus-polaris-test-uksouth' --resource-group 'rg-directus' --subscription ${{ env.AZURE_SUB_TST }}  
+
+  Function-App-stop:
+    runs-on: ubuntu-latest
+    environment: azure-polaris-test-start-stop-automation
+    steps:
+    - uses: actions/checkout@main
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_POLARIS_TEST_START_STOP_SERVICE_PRINCIPAL }}
+
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.48.0
+        inlineScript: |
+              az config set extension.use_dynamic_install=yes_without_prompt
+              az functionapp stop --name 'as-app-malwarescan-polaris-test-uksouth' --resource-group 'rg-malwarescanning' --subscription ${{ env.AZURE_SUB_TST }}  
+
+

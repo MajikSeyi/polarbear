@@ -1,0 +1,87 @@
+env:
+  AZURE_SUB_GATEWAY: 'e22eb6a5-6f38-4574-9b84-1c1dbe1c8b97'
+  vnetdeployment: './Shared-Services/Shared-Networking/shared-vnet-creation.bicep'
+  gatewaylocation: './Shared-Services/Shared-Networking/shared-networking.bicep'
+  paramlocation: './Shared-Services/Shared-Networking/shared-networking-param.json'
+  
+
+ 
+on:
+  workflow_dispatch:
+    inputs:
+      select:
+        type: choice
+        description: Pipeline to deploy
+        options:
+          - Deploy_AFD
+          - Deploy_VNET
+
+# on: [workflow_dispatch]
+name: Shared_Gateway_deployment
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run bicep linter
+        run: az bicep build --file ${{ env.gatewaylocation }}
+
+  validate: 
+    runs-on: ubuntu-latest
+    environment: azure-devops-code-validation
+    steps: 
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_DEVOPS_CODE__VALIDATION_SERVICE_PRINCIPAL }}
+    - uses: azure/arm-deploy@v1
+      name: Run preflight validation
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_GATEWAY }}
+        template: ${{ env.gatewaylocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+        deploymentMode: validate
+
+
+
+  build_deploy_gateway:
+    needs: [lint, validate ]
+    if: inputs.select == 'Deploy_AFD'
+    runs-on: ubuntu-latest
+    environment: azure-gateways-production
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_GATEWAYS_PRODUCTION_SERVICE_PRINCIPAL }}
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_GATEWAY }}
+        template: ${{ env.gatewaylocation }}
+        parameters: ${{ env.paramlocation }}
+        region: 'uksouth'
+        failOnStdErr: false 
+
+  build_deploy_vnet:
+    needs: [lint, validate ]
+    if: inputs.select == 'Deploy_VNET'
+    runs-on: ubuntu-latest
+    environment: azure-gateways-production
+    steps:
+    - uses: actions/checkout@v3
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_GATEWAYS_PRODUCTION_SERVICE_PRINCIPAL }}
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        scope: subscription
+        subscriptionId: ${{ env.AZURE_SUB_GATEWAY }}
+        template: ${{ env.vnetdeployment }}
+        region: 'uksouth'
+        failOnStdErr: false 
